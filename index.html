@@ -4,29 +4,46 @@
   <title>Looker Studio Embed</title>
 </head>
 <body>
+  <!-- Input box for the user to enter their password -->
+  <label for="passkeyInput">Enter your Password:</label>
+  <input type="text" id="passkeyInput" placeholder="Enter your password here" />
+  <button id="sendPasskey">Submit</button>
+
   <!-- Looker Studio iframe -->
   <iframe id="embeddedReport"
-        src="https://lookerstudio.google.com/embed/reporting/1e2efdf1-860f-4036-ae60-573bba1df384/page/p_2vs1q00cgd?Password=TEA60187"
-        style="width: 100%; height: 500px; border: none;">
-</iframe>
+          src="https://lookerstudio.google.com/embed/reporting/1e2efdf1-860f-4036-ae60-573bba1df384/page/p_2vs1q00cgd"
+          style="width: 100%; height: 500px; border: none;">
+  </iframe>
 
   <script>
-    window.onload = function () {
-      const checkIframe = setInterval(() => {
-        const iframe = document.getElementById("embeddedReport");
-        if (iframe) {
-          clearInterval(checkIframe); // Stop checking once the iframe is found
-          const passkey = "TEA60187";
-          const iframeDomain = "https://lookerstudio.google.com";
+    document.getElementById("sendPasskey").addEventListener("click", function () {
+      const iframe = document.getElementById("embeddedReport");
+      const passkey = document.getElementById("passkeyInput").value.trim();
 
-          // Send the passkey to the Looker Studio iframe
-          iframe.contentWindow.postMessage(passkey, iframeDomain);
-          console.log("Passkey sent:", passkey);
-        } else {
-          console.log("Waiting for iframe with id 'embeddedReport'...");
-        }
-      }, 500); // Check every 500 milliseconds
-    };
+      if (iframe && passkey) {
+        // Wait for the iframe to load
+        iframe.onload = () => {
+          try {
+            const iframeDocument = iframe.contentDocument || iframe.contentWindow.document;
+            const passwordField = iframeDocument.querySelector('[aria-label="Password"]'); // Adjust selector based on the field
+
+            if (passwordField) {
+              // Simulate entering the passkey into the Password field
+              passwordField.value = passkey;
+              passwordField.dispatchEvent(new Event('input', { bubbles: true }));
+
+              console.log("Passkey entered programmatically:", passkey);
+            } else {
+              console.error("Password field not found in the iframe.");
+            }
+          } catch (err) {
+            console.error("Unable to access the iframe due to cross-origin restrictions.", err);
+          }
+        };
+      } else {
+        console.error("Passkey is empty or iframe not found.");
+      }
+    });
   </script>
 </body>
 </html>
