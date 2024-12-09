@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Looker Studio Embed</title>
+</head>
+<body>
+  <iframe id="embeddedReport"
+          src="https://lookerstudio.google.com/embed/reporting/1e2efdf1-860f-4036-ae60-573bba1df384/page/p_2vs1q00cgd"
+          style="width: 100%; height: 500px; border: none;">
+  </iframe>
+
+  <script>
+    window.onload = function() {
+      const checkIframe = setInterval(() => {
+        const iframe = document.getElementById("embeddedReport");
+        if (iframe) {
+          clearInterval(checkIframe);
+          const passkey = "TEA60187";
+          const iframeDomain = "https://lookerstudio.google.com";
+          iframe.contentWindow.postMessage(passkey, iframeDomain);
+          console.log("Passkey sent:", passkey);
+        } else {
+          console.log("Waiting for iframe with id 'embeddedReport'...");
+        }
+      }, 500);
+    };
+  </script>
+</body>
+</html>
